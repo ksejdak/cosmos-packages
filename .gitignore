@@ -1,0 +1,6 @@
+# Build artefacts.
+src/
+build/
+bin/
+*tar.bz2
+*tar.gz

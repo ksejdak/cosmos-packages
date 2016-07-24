@@ -1,0 +1,128 @@
+diff -Nrdu binutils-2.26/bfd/config.bfd binutils-2.26_cosmos/bfd/config.bfd
+--- binutils-2.26/bfd/config.bfd	2015-11-13 09:27:40.000000000 +0100
++++ binutils-2.26_cosmos/bfd/config.bfd	2016-07-24 13:51:45.596123301 +0200
+@@ -336,6 +336,10 @@
+     targ_selvecs=arm_coff_be_vec
+     targ_underscore=yes
+     ;;
++  arm-*-cosmos*)
++    targ_defvec=arm_elf32_le_vec
++    targ_selvecs=arm_elf32_be_vec
++    ;;
+   arm-*-rtems*)
+     targ_defvec=arm_elf32_le_vec
+     targ_selvecs=arm_elf32_be_vec
+diff -Nrdu binutils-2.26/config.sub binutils-2.26_cosmos/config.sub
+--- binutils-2.26/config.sub	2015-11-13 09:27:41.000000000 +0100
++++ binutils-2.26_cosmos/config.sub	2016-07-24 13:36:03.534988142 +0200
+@@ -1399,7 +1399,7 @@
+ 	      | -os2* | -vos* | -palmos* | -uclinux* | -nucleus* \
+ 	      | -morphos* | -superux* | -rtmk* | -rtmk-nova* | -windiss* \
+ 	      | -powermax* | -dnix* | -nx6 | -nx7 | -sei* | -dragonfly* \
+-	      | -skyos* | -haiku* | -rdos* | -toppers* | -drops* | -es* | -tirtos*)
++	      | -skyos* | -haiku* | -rdos* | -toppers* | -drops* | -es* | -tirtos* | -cosmos*)
+ 	# Remember, each alternative MUST END IN *, to match a version number.
+ 		;;
+ 	-qnx*)
+diff -Nrdu binutils-2.26/gas/configure.tgt binutils-2.26_cosmos/gas/configure.tgt
+--- binutils-2.26/gas/configure.tgt	2015-11-13 09:27:41.000000000 +0100
++++ binutils-2.26_cosmos/gas/configure.tgt	2016-07-24 13:36:47.487370406 +0200
+@@ -135,6 +135,7 @@
+ 
+   arm-*-aout)				fmt=aout ;;
+   arm-*-coff)				fmt=coff ;;
++  arm-*-cosmos*)			fmt=elf ;;
+   arm-*-rtems*)				fmt=elf ;;
+   arm-*-elf)				fmt=elf ;;
+   arm-*-eabi*)				fmt=elf em=armeabi ;;
+diff -Nrdu binutils-2.26/ld/configure.tgt binutils-2.26_cosmos/ld/configure.tgt
+--- binutils-2.26/ld/configure.tgt	2015-11-13 09:27:42.000000000 +0100
++++ binutils-2.26_cosmos/ld/configure.tgt	2016-07-24 13:37:31.711762015 +0200
+@@ -102,6 +102,7 @@
+ 			targ_extra_emuls="armelf armelf_nbsd armelfb_nbsd"  ;;
+ arm-*-nto*)		targ_emul=armnto ;;
+ arm-*-openbsd*)		targ_emul=armnbsd ;;
++arm-*-cosmos*)		targ_emul=armelf ;;
+ arm-*-rtems*)		targ_emul=armelf ;;
+ armeb-*-elf | armeb-*-eabi*)
+ 			targ_emul=armelfb ;;
+diff -Nrdu binutils-2.26/ld/emulparams/armelf_cosmos.sh binutils-2.26_cosmos/ld/emulparams/armelf_cosmos.sh
+--- binutils-2.26/ld/emulparams/armelf_cosmos.sh	1970-01-01 01:00:00.000000000 +0100
++++ binutils-2.26_cosmos/ld/emulparams/armelf_cosmos.sh	2016-07-24 13:48:27.874102166 +0200
+@@ -0,0 +1,24 @@
++ +ARCH=arm
++SCRIPT_NAME=elf
++OUTPUT_FORMAT="elf32-littlearm"
++BIG_OUTPUT_FORMAT="elf32-bigarm"
++LITTLE_OUTPUT_FORMAT="elf32-littlearm"
++MAXPAGESIZE="CONSTANT (MAXPAGESIZE)"
++COMMONPAGESIZE="CONSTANT (COMMONPAGESIZE)"
++TEMPLATE_NAME=elf32
++EXTRA_EM_FILE=armelf
++GENERATE_SHLIB_SCRIPT=yes
++GENERATE_PIE_SCRIPT=yes
++
++DATA_START_SYMBOLS='PROVIDE (__data_start = .);';
++OTHER_TEXT_SECTIONS='*(.glue_7t) *(.glue_7) *(.vfp11_veneer) *(.v4_bx)'
++OTHER_BSS_SYMBOLS='__bss_start__ = .;'
++OTHER_BSS_END_SYMBOLS='_bss_end__ = . ; __bss_end__ = . ;'
++OTHER_END_SYMBOLS='__end__ = . ;'
++OTHER_SECTIONS='.note.gnu.arm.ident 0 : { KEEP (*(.note.gnu.arm.ident)) }'
++
++TEXT_START_ADDR=0x00001000
++TARGET2_TYPE=got-rel
++
++# ARM does not support .s* sections.
++NO_SMALL_DATA=yes
+diff -Nrdu binutils-2.26/ld/Makefile.am binutils-2.26_cosmos/ld/Makefile.am
+--- binutils-2.26/ld/Makefile.am	2015-11-13 09:27:42.000000000 +0100
++++ binutils-2.26_cosmos/ld/Makefile.am	2016-07-24 13:44:46.675884460 +0200
+@@ -173,6 +173,7 @@
+ 	earmelf_linux_eabi.c \
+ 	earmelf_nacl.c \
+ 	earmelf_nbsd.c \
++	earmelf_cosmos.c \
+ 	earmelf_vxworks.c \
+ 	earmelfb.c \
+ 	earmelfb_fbsd.c \
+@@ -765,6 +766,10 @@
+   $(ELF_DEPS) $(srcdir)/emultempl/armelf.em \
+   $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
+ 
++earmelf_cosmos.c: $(srcdir)/emulparams/armelf_cosmos.sh \
++  $(ELF_DEPS) $(srcdir)/emultempl/armelf.em \
++  $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
++
+ earmelf_vxworks.c: $(srcdir)/emulparams/armelf_vxworks.sh \
+   $(srcdir)/emulparams/vxworks.sh $(srcdir)/emulparams/armelf.sh \
+   $(ELF_DEPS) $(srcdir)/emultempl/vxworks.em \
+diff -Nrdu binutils-2.26/ld/Makefile.in binutils-2.26_cosmos/ld/Makefile.in
+--- binutils-2.26/ld/Makefile.in	2015-11-13 09:27:42.000000000 +0100
++++ binutils-2.26_cosmos/ld/Makefile.in	2016-07-24 13:47:00.085215464 +0200
+@@ -503,6 +503,7 @@
+ 	earmelf_linux_eabi.c \
+ 	earmelf_nacl.c \
+ 	earmelf_nbsd.c \
++	earmelf_cosmos.c \
+ 	earmelf_vxworks.c \
+ 	earmelfb.c \
+ 	earmelfb_fbsd.c \
+@@ -1129,6 +1130,7 @@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/earmelf_linux_eabi.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/earmelf_nacl.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/earmelf_nbsd.Po@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/earmelf_cosmos.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/earmelf_vxworks.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/earmelfb.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/earmelfb_fbsd.Po@am__quote@
+@@ -2271,6 +2273,10 @@
+   $(ELF_DEPS) $(srcdir)/emultempl/armelf.em \
+   $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
+ 
++earmelf_cosmos.c: $(srcdir)/emulparams/armelf_cosmos.sh \
++  $(ELF_DEPS) $(srcdir)/emultempl/armelf.em \
++  $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
++
+ earmelf_vxworks.c: $(srcdir)/emulparams/armelf_vxworks.sh \
+   $(srcdir)/emulparams/vxworks.sh $(srcdir)/emulparams/armelf.sh \
+   $(ELF_DEPS) $(srcdir)/emultempl/vxworks.em \
