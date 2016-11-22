@@ -21,7 +21,7 @@ if [ ! -d $SRC_PATH/$APP_NAME ]; then
 
     tar jxf $APP_TAR_NAME -C $SRC_PATH
 
-	for patchfile in *.patch; do
+	for patchfile in binutils*.patch; do
 		patch -d $SRC_PATH/$APP_NAME -p1 < $patchfile
 	done
 fi

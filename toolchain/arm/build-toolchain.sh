@@ -4,4 +4,4 @@
 ./build-gmp.sh
 ./build-mpfr.sh
 ./build-mpc.sh
-#./build-g++.sh
+./build-g++.sh

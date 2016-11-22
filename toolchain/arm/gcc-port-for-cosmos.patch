@@ -1,0 +1,126 @@
+diff -Nrdu gcc-6.1.0/config.sub gcc-6.1.0_cosmos/config.sub
+--- gcc-6.1.0/config.sub	2015-12-31 22:13:28.000000000 +0100
++++ gcc-6.1.0_cosmos/config.sub	2016-07-24 17:34:50.300752154 +0200
+@@ -1399,7 +1399,7 @@
+ 	      | -morphos* | -superux* | -rtmk* | -rtmk-nova* | -windiss* \
+ 	      | -powermax* | -dnix* | -nx6 | -nx7 | -sei* | -dragonfly* \
+ 	      | -skyos* | -haiku* | -rdos* | -toppers* | -drops* | -es* \
+-	      | -onefs* | -tirtos*)
++	      | -onefs* | -tirtos* | -cosmos*)
+ 	# Remember, each alternative MUST END IN *, to match a version number.
+ 		;;
+ 	-qnx*)
+diff -Nrdu gcc-6.1.0/gcc/config/arm/t-cosmos gcc-6.1.0_cosmos/gcc/config/arm/t-cosmos
+--- gcc-6.1.0/gcc/config/arm/t-cosmos	1970-01-01 01:00:00.000000000 +0100
++++ gcc-6.1.0_cosmos/gcc/config/arm/t-cosmos	2016-07-24 17:36:02.377680362 +0200
+@@ -0,0 +1,29 @@
++# Copyright (C) 1998-2016 Free Software Foundation, Inc.
++#
++# This file is part of GCC.
++#
++# GCC is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 3, or (at your option)
++# any later version.
++#
++# GCC is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with GCC; see the file COPYING3.  If not see
++# <http://www.gnu.org/licenses/>.
++
++MULTILIB_OPTIONS     = marm/mthumb
++MULTILIB_DIRNAMES    = arm thumb
++MULTILIB_EXCEPTIONS  =
++MULTILIB_MATCHES     =
++
++MULTILIB_OPTIONS     += mfloat-abi=hard
++MULTILIB_DIRNAMES    += fpu
++MULTILIB_MATCHES     += mfloat-abi?hard=mhard-float
++
++MULTILIB_OPTIONS     += mno-thumb-interwork/mthumb-interwork
++MULTILIB_DIRNAMES    += normal interwork
+diff -Nrdu gcc-6.1.0/gcc/config/cosmos.h gcc-6.1.0_cosmos/gcc/config/cosmos.h
+--- gcc-6.1.0/gcc/config/cosmos.h	1970-01-01 01:00:00.000000000 +0100
++++ gcc-6.1.0_cosmos/gcc/config/cosmos.h	2016-07-24 17:37:23.998700163 +0200
+@@ -0,0 +1,32 @@
++/* Copyright (C) 1998-2016 Free Software Foundation, Inc.
++
++This file is part of GCC.
++
++GCC is free software; you can redistribute it and/or modify
++it under the terms of the GNU General Public License as published by
++the Free Software Foundation; either version 3, or (at your option)
++any later version.
++
++GCC is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++GNU General Public License for more details.
++
++You should have received a copy of the GNU General Public License
++along with GCC; see the file COPYING3.  If not see
++<http://www.gnu.org/licenses/>. */
++
++#undef TARGET_OS_CPP_BUILTINS
++#define TARGET_OS_CPP_BUILTINS()      \
++    do {                                \
++      builtin_define_std ("cosmos");      \
++      builtin_define_std ("unix");      \
++      builtin_assert ("system=cosmos");   \
++      builtin_assert ("system=unix");   \
++    } while(0);
++
++#define STD_LIB_SPEC "%{!shared:%{g*:-lg} %{!p:%{!pg:-lc}}%{p:-lc_p}%{pg:-lc_p}}"
++
++/* This will prevent selecting 'unsigned long int' instead of 'unsigned int' as 'uint32_t' in stdint-newlib.h. */
++#undef STDINT_LONG32
++#define STDINT_LONG32		0 
+diff -Nrdu gcc-6.1.0/gcc/config.gcc gcc-6.1.0_cosmos/gcc/config.gcc
+--- gcc-6.1.0/gcc/config.gcc	2016-04-11 12:14:59.000000000 +0200
++++ gcc-6.1.0_cosmos/gcc/config.gcc	2016-07-24 17:41:52.701877439 +0200
+@@ -815,6 +815,11 @@
+       ;;
+   esac
+   ;;
++*-*-cosmos*)
++  gas=yes
++  gnu_ld=yes
++  default_use_cxa_atexit=yes
++  ;;
+ *-*-rtems*)
+   case ${enable_threads} in
+     "" | yes | rtems) thread_file='rtems' ;;
+@@ -1099,6 +1104,12 @@
+ 	# The EABI requires the use of __cxa_atexit.
+ 	default_use_cxa_atexit=yes
+ 	;;
++arm*-*-cosmos*)
++	tm_file="elfos.h arm/unknown-elf.h arm/elf.h arm/bpabi.h"
++	tm_file="${tm_file} newlib-stdint.h cosmos.h"
++	tm_file="${tm_file} arm/aout.h arm/arm.h"
++	tmake_file="${tmake_file} arm/t-arm arm/t-bpabi arm/t-cosmos"
++	;;
+ arm*-*-eabi* | arm*-*-symbianelf* | arm*-*-rtems*)
+ 	case ${target} in
+ 	arm*eb-*-eabi*)
+diff -Nrdu gcc-6.1.0/libgcc/config.host gcc-6.1.0_cosmos/libgcc/config.host
+--- gcc-6.1.0/libgcc/config.host	2016-02-26 21:02:28.000000000 +0100
++++ gcc-6.1.0_cosmos/libgcc/config.host	2016-07-24 17:43:16.194822297 +0200
+@@ -402,6 +402,13 @@
+ 	unwind_header=config/arm/unwind-arm.h
+ 	extra_parts="$extra_parts crti.o crtn.o"
+ 	;;
++arm*-*-cosmos*)
++	tmake_file="t-hardfp t-softfp arm/t-arm arm/t-elf arm/t-softfp arm/t-cosmos"
++	tmake_file="${tmake_file} arm/t-bpabi"
++	tm_file="$tm_file arm/bpabi-lib.h"
++	extra_parts="crtbegin.o crtend.o crti.o crtn.o"
++	unwind_header=config/arm/unwind-arm.h
++	;;
+ arm*-*-eabi* | arm*-*-symbianelf* | arm*-*-rtems*)
+ 	tmake_file="${tmake_file} arm/t-arm arm/t-elf t-fixedpoint-gnu-prefix"
+ 	tm_file="$tm_file arm/bpabi-lib.h"
