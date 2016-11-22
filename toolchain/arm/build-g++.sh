@@ -26,12 +26,17 @@ if [ ! -d $SRC_PATH/$APP_NAME ]; then
 	done
 fi
 
+###########################################
+# PHASE 1 - GCC without newlib and C++.
+###########################################
+
 cd $BUILD_PATH/$APP_NAME
 
-$SRC_PATH/$APP_NAME/configure --target=$TOOLCHAIN_PREFIX --prefix=$BUILD_PATH --enable-languages=c,c++ --disable-libssp --with-gmp=$BUILD_PATH --with-mpfr=$BUILD_PATH \
-                              --with-mpc=$BUILD_PATH --disable-nls --with-newlib --with-sysroot=$BUILD_PATH/$TOOLCHAIN_PREFIX --with-arch=armv7-a --with-fpu=neon-vfpv4 \
+$SRC_PATH/$APP_NAME/configure --target=$TOOLCHAIN_PREFIX --prefix=$BUILD_PATH --enable-languages=c --disable-libssp --with-gmp=$BUILD_PATH --with-mpfr=$BUILD_PATH \
+                              --with-mpc=$BUILD_PATH --disable-nls --with-sysroot=$BUILD_PATH/$TOOLCHAIN_PREFIX --with-arch=armv7-a --with-fpu=neon-vfpv4 \
                               --with-mode=thumb --with-abi=aapcs
-#make -j5 all-gcc all-target-libgcc
-#make install-gcc install-target-libgcc
+
+make -j5 all-gcc all-target-libgcc all-target-libstdc++-v3
+make install-gcc install-target-libgcc install-target-libstdc++-v3
 
 cd -
