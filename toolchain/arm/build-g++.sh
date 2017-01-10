@@ -32,7 +32,7 @@ fi
 
 cd $BUILD_PATH/$APP_NAME
 
-$SRC_PATH/$APP_NAME/configure --target=$TOOLCHAIN_PREFIX --prefix=$BUILD_PATH --enable-languages=c --with-gmp=$BUILD_PATH --with-mpfr=$BUILD_PATH \
+$SRC_PATH/$APP_NAME/configure --target=$TOOLCHAIN_PREFIX --prefix=$BUILD_PATH --enable-languages=c,c++ --with-gmp=$BUILD_PATH --with-mpfr=$BUILD_PATH \
                               --with-mpc=$BUILD_PATH --with-sysroot=$BUILD_PATH/$TOOLCHAIN_PREFIX --with-arch=armv7-a --with-fpu=neon-vfpv4 \
                               --with-mode=thumb
 
