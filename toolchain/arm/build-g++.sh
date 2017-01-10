@@ -36,7 +36,9 @@ $SRC_PATH/$APP_NAME/configure --target=$TOOLCHAIN_PREFIX --prefix=$BUILD_PATH --
                               --with-mpc=$BUILD_PATH --with-sysroot=$BUILD_PATH/$TOOLCHAIN_PREFIX --with-arch=armv7-a --with-fpu=neon-vfpv4 \
                               --with-mode=thumb
 
-make -j5 all-gcc all-target-libgcc all-target-libstdc++-v3
-make install-gcc install-target-libgcc install-target-libstdc++-v3
+#make -j5 all-gcc all-target-libgcc all-target-libstdc++-v3
+#make install-gcc install-target-libgcc install-target-libstdc++-v3
+make -j5
+make install
 
 cd -
