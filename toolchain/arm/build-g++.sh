@@ -1,6 +1,6 @@
 #!/bin/bash
 
-REPOSITORY_ROOT="$PWD/../.."
+REPOSITORY_ROOT=`git rev-parse --show-toplevel`
 SRC_PATH="$REPOSITORY_ROOT/src"
 BUILD_PATH="$REPOSITORY_ROOT/build"
 BIN_PATH="$REPOSITORY_ROOT/bin/toolchain"

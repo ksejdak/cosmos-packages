@@ -1,11 +1,11 @@
 #!/bin/bash
 
-REPOSITORY_ROOT="$PWD/../.."
+REPOSITORY_ROOT=`git rev-parse --show-toplevel`
 SRC_PATH="$REPOSITORY_ROOT/src"
 BUILD_PATH="$REPOSITORY_ROOT/build"
 BIN_PATH="$REPOSITORY_ROOT/bin/toolchain"
 
-APP_NAME=mpfr-3.1.4
+APP_NAME=mpfr-3.1.5
 APP_TAR_NAME=$APP_NAME.tar.bz2
 APP_URL=http://www.mpfr.org/mpfr-current/$APP_TAR_NAME
 
