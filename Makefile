@@ -10,7 +10,7 @@ clean:
     done
 
 toolchain:
-	toolchain/build-toolchain.sh ~/projects/toolchain
+	make -C toolchain
 
 clean-toolchain:
-	rm -rf ~/projects/toolchain
+	make clean -C toolchain
