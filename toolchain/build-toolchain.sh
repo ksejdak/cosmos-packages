@@ -99,8 +99,8 @@ cd "${GCC}/build"
              --enable-languages=c,c++ --with-arch=armv7-a --with-fpu=neon-vfpv4 --with-mode=thumb --with-abi=aapcs \
              --with-newlib --disable-libssp --disable-nls
 
-make ${MAKEOPTS}
-make ${MAKEOPTS} install
+make ${MAKEOPTS} all-gcc
+make ${MAKEOPTS} install-gcc
 
 # Finalize.
 if [ $? -ne 0 ]; then
