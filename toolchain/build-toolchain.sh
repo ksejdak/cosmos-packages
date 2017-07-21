@@ -7,11 +7,11 @@ if [ -z "$1" ]; then
 fi
 
 # Toolchain packages.
-BINUTILS=binutils-2.26
+BINUTILS=binutils-2.28
 GMP=gmp-6.1.2
 MPFR=mpfr-3.1.5
 MPC=mpc-1.0.3
-GCC=gcc-6.1.0
+GCC=gcc-7.1.0
 
 BUILD_ROOT="$1"
 REPOSITORY_ROOT=`git rev-parse --show-toplevel`
@@ -46,9 +46,9 @@ cd "${BUILD_ROOT}"
 
 # Apply patches.
 echo "PATCHING ${BINUTILS}"
-patch -d ${BINUTILS} -p1 < "${SCRIPT_ROOT}"/binutils*.patch
+patch -d ${BINUTILS} -p1 < "${SCRIPT_ROOT}"/${BINUTILS}*.patch
 echo "PATCHING ${GCC}"
-patch -d ${GCC} -p1 < "${SCRIPT_ROOT}"/gcc*.patch
+patch -d ${GCC} -p1 < "${SCRIPT_ROOT}"/${GCC}*.patch
 
 # Build Binutils.
 echo "BUILDING ${BINUTILS}"

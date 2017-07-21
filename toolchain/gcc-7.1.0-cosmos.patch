@@ -1,20 +1,20 @@
-diff -Nrdu gcc-6.1.0/config.sub gcc-6.1.0_cosmos/config.sub
---- gcc-6.1.0/config.sub	2015-12-31 22:13:28.000000000 +0100
-+++ gcc-6.1.0_cosmos/config.sub	2016-07-24 17:34:50.300752154 +0200
-@@ -1399,7 +1399,7 @@
+diff -Nrdu gcc-7.1.0/config.sub gcc-7.1.0_cosmos/config.sub
+--- gcc-7.1.0/config.sub	2016-12-29 12:04:53.000000000 +0100
++++ gcc-7.1.0_cosmos/config.sub	2017-07-20 11:56:19.725454106 +0200
+@@ -1409,7 +1409,7 @@
  	      | -morphos* | -superux* | -rtmk* | -rtmk-nova* | -windiss* \
  	      | -powermax* | -dnix* | -nx6 | -nx7 | -sei* | -dragonfly* \
  	      | -skyos* | -haiku* | -rdos* | -toppers* | -drops* | -es* \
--	      | -onefs* | -tirtos*)
-+	      | -onefs* | -tirtos* | -cosmos*)
+-	      | -onefs* | -tirtos* | -phoenix* | -fuchsia* | -redox*)
++	      | -onefs* | -tirtos* | -phoenix* | -fuchsia* | -redox* | -cosmos*)
  	# Remember, each alternative MUST END IN *, to match a version number.
  		;;
  	-qnx*)
-diff -Nrdu gcc-6.1.0/gcc/config/arm/t-cosmos gcc-6.1.0_cosmos/gcc/config/arm/t-cosmos
---- gcc-6.1.0/gcc/config/arm/t-cosmos	1970-01-01 01:00:00.000000000 +0100
-+++ gcc-6.1.0_cosmos/gcc/config/arm/t-cosmos	2016-07-24 17:36:02.377680362 +0200
+diff -Nrdu gcc-7.1.0/gcc/config/arm/t-cosmos gcc-7.1.0_cosmos/gcc/config/arm/t-cosmos
+--- gcc-7.1.0/gcc/config/arm/t-cosmos	1970-01-01 01:00:00.000000000 +0100
++++ gcc-7.1.0_cosmos/gcc/config/arm/t-cosmos	2017-07-20 11:57:44.369390390 +0200
 @@ -0,0 +1,29 @@
-+# Copyright (C) 1998-2016 Free Software Foundation, Inc.
++# Copyright (C) 1998-2017 Free Software Foundation, Inc.
 +#
 +# This file is part of GCC.
 +#
@@ -43,11 +43,11 @@ diff -Nrdu gcc-6.1.0/gcc/config/arm/t-cosmos gcc-6.1.0_cosmos/gcc/config/arm/t-c
 +
 +MULTILIB_OPTIONS     += mno-thumb-interwork/mthumb-interwork
 +MULTILIB_DIRNAMES    += normal interwork
-diff -Nrdu gcc-6.1.0/gcc/config/cosmos.h gcc-6.1.0_cosmos/gcc/config/cosmos.h
---- gcc-6.1.0/gcc/config/cosmos.h	1970-01-01 01:00:00.000000000 +0100
-+++ gcc-6.1.0_cosmos/gcc/config/cosmos.h	2016-07-24 17:37:23.998700163 +0200
+diff -Nrdu gcc-7.1.0/gcc/config/cosmos.h gcc-7.1.0_cosmos/gcc/config/cosmos.h
+--- gcc-7.1.0/gcc/config/cosmos.h	1970-01-01 01:00:00.000000000 +0100
++++ gcc-7.1.0_cosmos/gcc/config/cosmos.h	2017-07-20 11:59:19.041319963 +0200
 @@ -0,0 +1,32 @@
-+/* Copyright (C) 1998-2016 Free Software Foundation, Inc.
++/* Copyright (C) 1998-2017 Free Software Foundation, Inc.
 +
 +This file is part of GCC.
 +
@@ -66,11 +66,11 @@ diff -Nrdu gcc-6.1.0/gcc/config/cosmos.h gcc-6.1.0_cosmos/gcc/config/cosmos.h
 +<http://www.gnu.org/licenses/>. */
 +
 +#undef TARGET_OS_CPP_BUILTINS
-+#define TARGET_OS_CPP_BUILTINS()      \
++#define TARGET_OS_CPP_BUILTINS()        \
 +    do {                                \
-+      builtin_define_std ("cosmos");      \
++      builtin_define_std ("cosmos");    \
 +      builtin_define_std ("unix");      \
-+      builtin_assert ("system=cosmos");   \
++      builtin_assert ("system=cosmos"); \
 +      builtin_assert ("system=unix");   \
 +    } while(0);
 +
@@ -78,11 +78,11 @@ diff -Nrdu gcc-6.1.0/gcc/config/cosmos.h gcc-6.1.0_cosmos/gcc/config/cosmos.h
 +
 +/* This will prevent selecting 'unsigned long int' instead of 'unsigned int' as 'uint32_t' in stdint-newlib.h. */
 +#undef STDINT_LONG32
-+#define STDINT_LONG32		0 
-diff -Nrdu gcc-6.1.0/gcc/config.gcc gcc-6.1.0_cosmos/gcc/config.gcc
---- gcc-6.1.0/gcc/config.gcc	2016-04-11 12:14:59.000000000 +0200
-+++ gcc-6.1.0_cosmos/gcc/config.gcc	2016-07-24 17:41:52.701877439 +0200
-@@ -815,6 +815,11 @@
++#define STDINT_LONG32		0
+diff -Nrdu gcc-7.1.0/gcc/config.gcc gcc-7.1.0_cosmos/gcc/config.gcc
+--- gcc-7.1.0/gcc/config.gcc	2017-03-24 14:59:51.000000000 +0100
++++ gcc-7.1.0_cosmos/gcc/config.gcc	2017-07-20 12:01:10.721237822 +0200
+@@ -818,6 +818,11 @@
        ;;
    esac
    ;;
@@ -91,10 +91,10 @@ diff -Nrdu gcc-6.1.0/gcc/config.gcc gcc-6.1.0_cosmos/gcc/config.gcc
 +  gnu_ld=yes
 +  default_use_cxa_atexit=yes
 +  ;;
- *-*-rtems*)
-   case ${enable_threads} in
-     "" | yes | rtems) thread_file='rtems' ;;
-@@ -1099,6 +1104,12 @@
+ *-*-phoenix*)
+   gas=yes
+   gnu_ld=yes
+@@ -1121,6 +1126,12 @@
  	# The EABI requires the use of __cxa_atexit.
  	default_use_cxa_atexit=yes
  	;;
@@ -104,13 +104,13 @@ diff -Nrdu gcc-6.1.0/gcc/config.gcc gcc-6.1.0_cosmos/gcc/config.gcc
 +	tm_file="${tm_file} arm/aout.h arm/arm.h"
 +	tmake_file="${tmake_file} arm/t-arm arm/t-bpabi arm/t-cosmos"
 +	;;
- arm*-*-eabi* | arm*-*-symbianelf* | arm*-*-rtems*)
- 	case ${target} in
- 	arm*eb-*-eabi*)
-diff -Nrdu gcc-6.1.0/libgcc/config.host gcc-6.1.0_cosmos/libgcc/config.host
---- gcc-6.1.0/libgcc/config.host	2016-02-26 21:02:28.000000000 +0100
-+++ gcc-6.1.0_cosmos/libgcc/config.host	2016-07-24 17:43:16.194822297 +0200
-@@ -402,6 +402,13 @@
+ arm*-*-phoenix*)
+ 	tm_file="elfos.h arm/unknown-elf.h arm/elf.h arm/bpabi.h"
+ 	tm_file="${tm_file} newlib-stdint.h phoenix.h"
+diff -Nrdu gcc-7.1.0/libgcc/config.host gcc-7.1.0_cosmos/libgcc/config.host
+--- gcc-7.1.0/libgcc/config.host	2017-03-10 20:33:27.000000000 +0100
++++ gcc-7.1.0_cosmos/libgcc/config.host	2017-07-20 12:01:43.917213574 +0200
+@@ -413,6 +413,13 @@
  	unwind_header=config/arm/unwind-arm.h
  	extra_parts="$extra_parts crti.o crtn.o"
  	;;
@@ -121,6 +121,7 @@ diff -Nrdu gcc-6.1.0/libgcc/config.host gcc-6.1.0_cosmos/libgcc/config.host
 +	extra_parts="crtbegin.o crtend.o crti.o crtn.o"
 +	unwind_header=config/arm/unwind-arm.h
 +	;;
- arm*-*-eabi* | arm*-*-symbianelf* | arm*-*-rtems*)
- 	tmake_file="${tmake_file} arm/t-arm arm/t-elf t-fixedpoint-gnu-prefix"
- 	tm_file="$tm_file arm/bpabi-lib.h"
+ arm*-*-phoenix*)
+ 	tmake_file="t-hardfp t-softfp arm/t-arm arm/t-elf arm/t-softfp arm/t-phoenix"
+ 	tmake_file="${tmake_file} arm/t-bpabi"
+
