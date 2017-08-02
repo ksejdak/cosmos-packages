@@ -131,11 +131,21 @@ cd "${GCC}/build"
              --with-newlib \
              --with-mode=thumb \
              --with-abi=aapcs \
+             --without-headers \
+             --enable-threads=posix \
              --enable-languages=c,c++ \
              --with-arch=armv7-a \
              --with-fpu=neon-vfpv4 \
              --disable-nls \
-             --disable-libssp
+             --disable-decimal-float \
+             --disable-libffi \
+             --disable-libgomp \
+             --disable-libmudflap \
+             --disable-libquadmath \
+             --disable-libssp \
+             --disable-libstdcxx-pch \
+             --disable-shared \
+             --disable-tls
 
 make ${MAKEOPTS} all-gcc
 make ${MAKEOPTS} install-gcc
