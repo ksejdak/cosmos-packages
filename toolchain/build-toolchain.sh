@@ -128,14 +128,14 @@ cd "${GCC}/build"
              --with-gmp="${TOOLCHAIN_PREFIX}" \
              --with-mpfr="${TOOLCHAIN_PREFIX}" \
              --with-mpc="${TOOLCHAIN_PREFIX}" \
+             --with-newlib \
+             --with-mode=thumb \
+             --with-abi=aapcs \
              --enable-languages=c,c++ \
              --with-arch=armv7-a \
              --with-fpu=neon-vfpv4 \
-             --with-mode=thumb \
-             --with-abi=aapcs \
-             --with-newlib \
-             --disable-libssp \
-             --disable-nls
+             --disable-nls \
+             --disable-libssp
 
 make ${MAKEOPTS} all-gcc
 make ${MAKEOPTS} install-gcc
