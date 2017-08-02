@@ -151,7 +151,7 @@ make ${MAKEOPTS} install-gcc
 
 # Finalize.
 END_TIME=`date +%s`
-EXECUTION_TIME=`expr $END_TIME - $START_TIME` s.
+EXECUTION_TIME=`expr $END_TIME - $START_TIME`
 
 if [ $? -ne 0 ]; then
     echo "BUILDING TOOLCHAIN FAILED IN $EXECUTION_TIME s."
