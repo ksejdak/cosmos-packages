@@ -60,7 +60,10 @@ fi
 echo "BUILDING ${BINUTILS}"
 cd "${BINUTILS}/build"
 
-../configure --target=${TARGET} --prefix="${TOOLCHAIN_PREFIX}" --with-sysroot="${TOOLCHAIN_PREFIX}/${TARGET}"
+../configure --target=${TARGET} \
+             --prefix="${TOOLCHAIN_PREFIX}" \
+             --with-sysroot="${TOOLCHAIN_PREFIX}/${TARGET}"
+
 make ${MAKEOPTS}
 make ${MAKEOPTS} install
 
@@ -70,7 +73,9 @@ cd -
 echo "BUILDING ${GMP}"
 cd "${GMP}/build"
 
-../configure --prefix="${TOOLCHAIN_PREFIX}" --disable-shared
+../configure --prefix="${TOOLCHAIN_PREFIX}" \
+             --disable-shared
+
 make ${MAKEOPTS}
 make ${MAKEOPTS} install
 
@@ -80,7 +85,10 @@ cd -
 echo "BUILDING ${MPFR}"
 cd "${MPFR}/build"
 
-../configure --prefix="${TOOLCHAIN_PREFIX}" --with-gmp="${TOOLCHAIN_PREFIX}" --disable-shared
+../configure --prefix="${TOOLCHAIN_PREFIX}" \
+             --with-gmp="${TOOLCHAIN_PREFIX}" \
+             --disable-shared
+
 make ${MAKEOPTS}
 make ${MAKEOPTS} install
 
@@ -90,7 +98,12 @@ cd -
 echo "BUILDING ${MPC}"
 cd "${MPC}/build"
 
-../configure --target=${TARGET} --prefix="${TOOLCHAIN_PREFIX}" --with-gmp="${TOOLCHAIN_PREFIX}" --with-mpfr="${TOOLCHAIN_PREFIX}" --disable-shared
+../configure --target=${TARGET} \
+             --prefix="${TOOLCHAIN_PREFIX}" \
+             --with-gmp="${TOOLCHAIN_PREFIX}" \
+             --with-mpfr="${TOOLCHAIN_PREFIX}" \
+             --disable-shared
+
 make ${MAKEOPTS}
 make ${MAKEOPTS} install
 
@@ -100,10 +113,20 @@ cd -
 echo "BUILDING ${GCC}"
 cd "${GCC}/build"
 
-../configure --target=${TARGET} --prefix="${TOOLCHAIN_PREFIX}" --with-sysroot="${TOOLCHAIN_PREFIX}/${TARGET}" \
-             --with-gmp="${TOOLCHAIN_PREFIX}" --with-mpfr="${TOOLCHAIN_PREFIX}" --with-mpc="${TOOLCHAIN_PREFIX}" \
-             --enable-languages=c,c++ --with-arch=armv7-a --with-fpu=neon-vfpv4 --with-mode=thumb --with-abi=aapcs \
-             --with-newlib --disable-libssp --disable-nls
+../configure --target=${TARGET} \
+             --prefix="${TOOLCHAIN_PREFIX}" \
+             --with-sysroot="${TOOLCHAIN_PREFIX}/${TARGET}" \
+             --with-gmp="${TOOLCHAIN_PREFIX}" \
+             --with-mpfr="${TOOLCHAIN_PREFIX}" \
+             --with-mpc="${TOOLCHAIN_PREFIX}" \
+             --enable-languages=c,c++ \
+             --with-arch=armv7-a \
+             --with-fpu=neon-vfpv4 \
+             --with-mode=thumb \
+             --with-abi=aapcs \
+             --with-newlib \
+             --disable-libssp \
+             --disable-nls
 
 make ${MAKEOPTS} all-gcc
 make ${MAKEOPTS} install-gcc
