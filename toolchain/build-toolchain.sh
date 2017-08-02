@@ -38,17 +38,23 @@ cd "${BUILD_ROOT}"
 [[ ! -f ${GCC}.tar.bz2 ]] && wget "http://www.mirrorservice.org/sites/ftp.gnu.org/gnu/gcc/${GCC}/${GCC}.tar.bz2"
 
 # Extract packages.
-[[ ! -d ${BINUTILS} ]] && tar jxf ${BINUTILS}.tar.bz2 && mkdir "${BINUTILS}/build"
-[[ ! -d ${GMP} ]] && tar jxf ${GMP}.tar.bz2 && mkdir "${GMP}/build"
-[[ ! -d ${MPFR} ]] && tar jxf ${MPFR}.tar.bz2 && mkdir "${MPFR}/build"
-[[ ! -d ${MPC} ]] && tar xf ${MPC}.tar.gz && mkdir "${MPC}/build"
-[[ ! -d ${GCC} ]] && tar jxf ${GCC}.tar.bz2 && mkdir "${GCC}/build"
+if [ ! -d ${BINUTILS} ]; then
+    tar jxf ${BINUTILS}.tar.bz2
+    echo "PATCHING ${BINUTILS}"
+    patch -d ${BINUTILS} -p1 < "${SCRIPT_ROOT}"/${BINUTILS}*.patch
+    mkdir -p "${BINUTILS}/build"
+fi
 
-# Apply patches.
-echo "PATCHING ${BINUTILS}"
-patch -d ${BINUTILS} -p1 < "${SCRIPT_ROOT}"/${BINUTILS}*.patch
-echo "PATCHING ${GCC}"
-patch -d ${GCC} -p1 < "${SCRIPT_ROOT}"/${GCC}*.patch
+[[ ! -d ${GMP} ]] && tar jxf ${GMP}.tar.bz2 && mkdir -p "${GMP}/build"
+[[ ! -d ${MPFR} ]] && tar jxf ${MPFR}.tar.bz2 && mkdir -p "${MPFR}/build"
+[[ ! -d ${MPC} ]] && tar xf ${MPC}.tar.gz && mkdir -p "${MPC}/build"
+
+if [ ! -d ${GCC} ]; then
+    tar jxf ${GCC}.tar.bz2
+    echo "PATCHING ${GCC}"
+    patch -d ${GCC} -p1 < "${SCRIPT_ROOT}"/${GCC}*.patch
+    mkdir -p "${GCC}/build"
+fi
 
 # Build Binutils.
 echo "BUILDING ${BINUTILS}"
