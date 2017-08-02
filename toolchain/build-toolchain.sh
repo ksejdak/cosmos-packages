@@ -1,6 +1,13 @@
 #!/bin/bash
 # $1 - toolchain install path
 
+display_time() {
+    ((m=($1%3600)/60))
+    ((s=$1%60))
+
+    printf "%02d MIN %02d SEC\n" $m $s
+}
+
 if [ -z "$1" ]; then
     echo "No toolchain install path provided! Abort."
     exit 1
@@ -172,9 +179,9 @@ END_TIME=`date +%s`
 EXECUTION_TIME=`expr $END_TIME - $START_TIME`
 
 if [ $STATUS -ne 0 ]; then
-    echo "BUILDING TOOLCHAIN FAILED IN $EXECUTION_TIME s."
+    echo "BUILDING TOOLCHAIN FAILED IN " `display_time $EXECUTION_TIME`
     exit 1
 fi
 
-echo "BUILDING TOOLCHAIN DONE IN $EXECUTION_TIME s."
+echo "BUILDING TOOLCHAIN DONE IN " `display_time $EXECUTION_TIME`
 exit 0
