@@ -62,7 +62,12 @@ cd "${BINUTILS}/build"
 
 ../configure --target=${TARGET} \
              --prefix="${TOOLCHAIN_PREFIX}" \
-             --with-sysroot="${TOOLCHAIN_PREFIX}/${TARGET}"
+             --with-sysroot="${TOOLCHAIN_PREFIX}/${TARGET}" \
+             --disable-shared \
+             --disable-nls \
+             --enable-interwork \
+             --enable-multilib
+             --enable-plugins
 
 make ${MAKEOPTS}
 make ${MAKEOPTS} install
@@ -74,7 +79,9 @@ echo "BUILDING ${GMP}"
 cd "${GMP}/build"
 
 ../configure --prefix="${TOOLCHAIN_PREFIX}" \
-             --disable-shared
+             --disable-shared \
+             --disable-nls \
+             --enable-cxx
 
 make ${MAKEOPTS}
 make ${MAKEOPTS} install
@@ -87,7 +94,8 @@ cd "${MPFR}/build"
 
 ../configure --prefix="${TOOLCHAIN_PREFIX}" \
              --with-gmp="${TOOLCHAIN_PREFIX}" \
-             --disable-shared
+             --disable-shared \
+             --disable-nls
 
 make ${MAKEOPTS}
 make ${MAKEOPTS} install
@@ -102,7 +110,8 @@ cd "${MPC}/build"
              --prefix="${TOOLCHAIN_PREFIX}" \
              --with-gmp="${TOOLCHAIN_PREFIX}" \
              --with-mpfr="${TOOLCHAIN_PREFIX}" \
-             --disable-shared
+             --disable-shared \
+             --disable-nls
 
 make ${MAKEOPTS}
 make ${MAKEOPTS} install
