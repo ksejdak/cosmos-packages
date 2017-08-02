@@ -7,10 +7,10 @@ if [ -z "$1" ]; then
 fi
 
 # Toolchain packages.
-BINUTILS=binutils-2.28
 GMP=gmp-6.1.2
 MPFR=mpfr-3.1.5
 MPC=mpc-1.0.3
+BINUTILS=binutils-2.28
 GCC=gcc-7.1.0
 
 BUILD_ROOT="$1"
@@ -31,13 +31,17 @@ fi
 mkdir -p "${TOOLCHAIN_PREFIX}"
 cd "${BUILD_ROOT}"
 
-[[ ! -f ${BINUTILS}.tar.bz2 ]] && wget "http://ftp.gnu.org/gnu/binutils/${BINUTILS}.tar.bz2"
 [[ ! -f ${GMP}.tar.bz2 ]] && wget "http://ftp.gnu.org/gnu/gmp/${GMP}.tar.bz2"
 [[ ! -f ${MPFR}.tar.bz2 ]] && wget "http://ftp.gnu.org/gnu/mpfr/${MPFR}.tar.bz2"
 [[ ! -f ${MPC}.tar.gz ]] && wget "ftp://ftp.gnu.org/gnu/mpc/${MPC}.tar.gz"
+[[ ! -f ${BINUTILS}.tar.bz2 ]] && wget "http://ftp.gnu.org/gnu/binutils/${BINUTILS}.tar.bz2"
 [[ ! -f ${GCC}.tar.bz2 ]] && wget "http://www.mirrorservice.org/sites/ftp.gnu.org/gnu/gcc/${GCC}/${GCC}.tar.bz2"
 
 # Extract packages.
+[[ ! -d ${GMP} ]] && tar jxf ${GMP}.tar.bz2 && mkdir -p "${GMP}/build"
+[[ ! -d ${MPFR} ]] && tar jxf ${MPFR}.tar.bz2 && mkdir -p "${MPFR}/build"
+[[ ! -d ${MPC} ]] && tar xf ${MPC}.tar.gz && mkdir -p "${MPC}/build"
+
 if [ ! -d ${BINUTILS} ]; then
     tar jxf ${BINUTILS}.tar.bz2
     echo "PATCHING ${BINUTILS}"
@@ -45,34 +49,12 @@ if [ ! -d ${BINUTILS} ]; then
     mkdir -p "${BINUTILS}/build"
 fi
 
-[[ ! -d ${GMP} ]] && tar jxf ${GMP}.tar.bz2 && mkdir -p "${GMP}/build"
-[[ ! -d ${MPFR} ]] && tar jxf ${MPFR}.tar.bz2 && mkdir -p "${MPFR}/build"
-[[ ! -d ${MPC} ]] && tar xf ${MPC}.tar.gz && mkdir -p "${MPC}/build"
-
 if [ ! -d ${GCC} ]; then
     tar jxf ${GCC}.tar.bz2
     echo "PATCHING ${GCC}"
     patch -d ${GCC} -p1 < "${SCRIPT_ROOT}"/${GCC}*.patch
     mkdir -p "${GCC}/build"
 fi
-
-# Build Binutils.
-echo "BUILDING ${BINUTILS}"
-cd "${BINUTILS}/build"
-
-../configure --target=${TARGET} \
-             --prefix="${TOOLCHAIN_PREFIX}" \
-             --with-sysroot="${TOOLCHAIN_PREFIX}/${TARGET}" \
-             --disable-shared \
-             --disable-nls \
-             --enable-interwork \
-             --enable-multilib
-             --enable-plugins
-
-make ${MAKEOPTS}
-make ${MAKEOPTS} install
-
-cd -
 
 # Build GMP.
 echo "BUILDING ${GMP}"
@@ -112,6 +94,24 @@ cd "${MPC}/build"
              --with-mpfr="${TOOLCHAIN_PREFIX}" \
              --disable-shared \
              --disable-nls
+
+make ${MAKEOPTS}
+make ${MAKEOPTS} install
+
+cd -
+
+# Build Binutils.
+echo "BUILDING ${BINUTILS}"
+cd "${BINUTILS}/build"
+
+../configure --target=${TARGET} \
+             --prefix="${TOOLCHAIN_PREFIX}" \
+             --with-sysroot="${TOOLCHAIN_PREFIX}/${TARGET}" \
+             --disable-shared \
+             --disable-nls \
+             --enable-interwork \
+             --enable-multilib
+             --enable-plugins
 
 make ${MAKEOPTS}
 make ${MAKEOPTS} install
