@@ -12,6 +12,7 @@ MPFR=mpfr-3.1.5
 MPC=mpc-1.0.3
 BINUTILS=binutils-2.28
 GCC=gcc-7.1.0
+NEWLIB=cosmos-newlib
 
 START_TIME=`date +%s`
 BUILD_ROOT="$1"
@@ -56,6 +57,8 @@ if [ ! -d ${GCC} ]; then
     patch -d ${GCC} -p1 < "${SCRIPT_ROOT}"/${GCC}*.patch
     mkdir -p "${GCC}/build"
 fi
+
+[[ ! -d ${NEWLIB} ]] && mkdir -p "${NEWLIB}/build"
 
 # Build GMP.
 echo "BUILDING ${GMP}"
@@ -149,11 +152,26 @@ cd "${GCC}/build"
 make ${MAKEOPTS} all-gcc
 make ${MAKEOPTS} install-gcc
 
+cd -
+
+# Build newlib.
+echo "BUILDING ${NEWLIB}"
+cd "${NEWLIB}/build"
+
+${REPOSITORY_ROOT}/../${NEWLIB}/configure --target=${TARGET} \
+                                          --prefix=${TOOLCHAIN_PREFIX} \
+                                          --disable-shared \
+                                          --disable-newlib-supplied-syscalls
+
+make ${MAKEOPTS}
+make ${MAKEOPTS} install
+
 # Finalize.
+STATUS=$?
 END_TIME=`date +%s`
 EXECUTION_TIME=`expr $END_TIME - $START_TIME`
 
-if [ $? -ne 0 ]; then
+if [ $STATUS -ne 0 ]; then
     echo "BUILDING TOOLCHAIN FAILED IN $EXECUTION_TIME s."
     exit 1
 fi
