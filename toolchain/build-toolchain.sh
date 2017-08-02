@@ -118,8 +118,8 @@ make ${MAKEOPTS} install
 
 cd -
 
-# Build GCC.
-echo "BUILDING ${GCC}"
+# Build GCC (Phase 1).
+echo "BUILDING ${GCC} (PHASE 1)"
 cd "${GCC}/build"
 
 ../configure --target=${TARGET} \
@@ -132,10 +132,8 @@ cd "${GCC}/build"
              --with-mode=thumb \
              --with-abi=aapcs \
              --without-headers \
+             --enable-languages=c \
              --enable-threads=posix \
-             --enable-languages=c,c++ \
-             --with-arch=armv7-a \
-             --with-fpu=neon-vfpv4 \
              --disable-nls \
              --disable-decimal-float \
              --disable-libffi \
