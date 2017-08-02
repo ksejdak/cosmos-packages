@@ -13,6 +13,7 @@ MPC=mpc-1.0.3
 BINUTILS=binutils-2.28
 GCC=gcc-7.1.0
 
+START_TIME=`date +%s`
 BUILD_ROOT="$1"
 REPOSITORY_ROOT=`git rev-parse --show-toplevel`
 SCRIPT_ROOT="${REPOSITORY_ROOT}/toolchain"
@@ -149,10 +150,13 @@ make ${MAKEOPTS} all-gcc
 make ${MAKEOPTS} install-gcc
 
 # Finalize.
+END_TIME=`date +%s`
+EXECUTION_TIME=`expr $END_TIME - $START_TIME` s.
+
 if [ $? -ne 0 ]; then
-    echo "BUILDING TOOLCHAIN FAILED"
+    echo "BUILDING TOOLCHAIN FAILED IN $EXECUTION_TIME s."
     exit 1
 fi
 
-echo "BUILDING TOOLCHAIN DONE"
+echo "BUILDING TOOLCHAIN DONE IN $EXECUTION_TIME s."
 exit 0
